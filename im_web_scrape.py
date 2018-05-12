@@ -9,6 +9,7 @@ import sys
 # specify the url
 im_page = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx"
 
+from urllib.request import urlopen
 page = urllib.urlopen(im_page)
 soup = BeautifulSoup(page, 'lxml')        #parse html
 #name_box = soup.find('tr', attrs={'class': 'odd'})
