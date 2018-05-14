@@ -9,10 +9,16 @@ import sys
 #   then go to page 2 to get the correct url.
 #   then do the same thing for all years wanted
 #   then replace the p=2 with p={page_nr}
+##the reason the webpages are listed instead of iterating through is because dates change and not just locations
 url_list = ["http://www.ironman.com/triathlon/events/americas/ironman/texas/results.aspx?p={page_nr}&race=texas&rd=20180428&agegroup=30-34&sex=M&y=2018&ps=20#axzz5FMGvgHL2",
+            "http://www.ironman.com/triathlon/events/americas/ironman/texas/results.aspx?p={page_nr}&race=texas&rd=20170422&agegroup=30-34&sex=M&y=2017&ps=20#axzz5FMGvgHL2",
+            "http://www.ironman.com/triathlon/events/americas/ironman/texas/results.aspx?p={page_nr}&race=texas&rd=20160514&agegroup=30-34&sex=M&y=2016&ps=20#axzz5FMGvgHL2",
+            "http://www.ironman.com/triathlon/events/americas/ironman/texas/results.aspx?p={page_nr}&race=texas&rd=20150516&agegroup=30-34&sex=M&y=2015&ps=20#axzz5FMGvgHL2",
+            "http://www.ironman.com/triathlon/events/americas/ironman/texas/results.aspx?p={page_nr}&race=texas&rd=20140517&agegroup=30-34&sex=M&y=2014&ps=20#axzz5FMGvgHL2",
             "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20160911&agegroup=30-34&sex=M&y=2016&ps=20#axzz5FMGvgHL2",
             "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20170910&agegroup=30-34&sex=M&y=2017&ps=20#axzz5FMGvgHL2",
-            "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20150913&agegroup=30-34&sex=M&y=2015&ps=20#axzz5FMGvgHL2"]
+            "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20150913&agegroup=30-34&sex=M&y=2015&ps=20#axzz5FMGvgHL2",
+            "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20140907&agegroup=30-34&sex=M&y=2014&ps=20#axzz5FMGvgHL2"]
 
 
 
@@ -106,7 +112,7 @@ if __name__ == '__main__':
 
         #print(im_orig_df)
 
-        for i in range(2,13):
+        for i in range(2,10):
             page_nr = i
             web_page = url_list[n].format(page_nr=page_nr)       #get the webpage url with page number
             print("Processing {}".format(web_page))                                     #print page for debug
