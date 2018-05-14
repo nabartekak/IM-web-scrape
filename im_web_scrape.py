@@ -4,7 +4,12 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import sys
 
-url_list = ["http://www.ironman.com/triathlon/events/americas/ironman/texas/results.aspx?p={page_nr}&race=texas&rd=20180428&agegroup=30-34&y=2018&ps=20#axzz5FMGvgHL2",
+#Add new urls to list
+#   be sure to add filters (AG and male)
+#   then go to page 2 to get the correct url.
+#   then do the same thing for all years wanted
+#   then replace the p=2 with p={page_nr}
+url_list = ["http://www.ironman.com/triathlon/events/americas/ironman/texas/results.aspx?p={page_nr}&race=texas&rd=20180428&agegroup=30-34&sex=M&y=2018&ps=20#axzz5FMGvgHL2",
             "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20160911&agegroup=30-34&sex=M&y=2016&ps=20#axzz5FMGvgHL2",
             "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20170910&agegroup=30-34&sex=M&y=2017&ps=20#axzz5FMGvgHL2",
             "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20150913&agegroup=30-34&sex=M&y=2015&ps=20#axzz5FMGvgHL2"]
@@ -82,7 +87,7 @@ if __name__ == '__main__':
     im_start_page = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx"
 
     initialize_web_page = im_start_page.format(page_nr=1)
-    #set initial table to get columns
+    #initializing a starting table
     init_table = get_table(initialize_web_page)
     #set initial columns names
     init_df,col_names = set_columns(init_table)
