@@ -4,6 +4,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import sys
 
+url_list = ["http://www.ironman.com/triathlon/events/americas/ironman/texas/results.aspx?p={page_nr}&race=texas&rd=20180428&agegroup=30-34&y=2018&ps=20#axzz5FMGvgHL2",
+            "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20160911&agegroup=30-34&sex=M&y=2016&ps=20#axzz5FMGvgHL2",
+            "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20170910&agegroup=30-34&sex=M&y=2017&ps=20#axzz5FMGvgHL2",
+            "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20150913&agegroup=30-34&sex=M&y=2015&ps=20#axzz5FMGvgHL2"]
+
+
+
 
 def get_table(url):
     page = urllib2.urlopen(url)
@@ -73,31 +80,42 @@ def merge_df(df1, df2):
 
 if __name__ == '__main__':
     im_start_page = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx"
-    url = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx?p={page_nr}&ps=20#axzz5F4J2YBv1"
 
-    ag3034_start_page = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx?race=worldchampionship&rd=20171014&y=2017&sex=&agegroup=30-34&loc=#axzz5FMGvgHL2"
-    ag3034_url = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx?p={page_nr}&race=worldchampionship&rd=20171014&agegroup=30-34&y=2017&ps=20#axzz5FMGvgHL2"
-    ag3540_url = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx?p={page_nr}&race=worldchampionship&rd=20171014&agegroup=35-39&y=2017&ps=20#axzz5FMGvgHL2"
-
+    initialize_web_page = im_start_page.format(page_nr=1)
     #set initial table to get columns
-    table = get_table(ag3034_start_page)
+    init_table = get_table(initialize_web_page)
     #set initial columns names
-    im_orig_df,col_names = set_columns(table)
+    init_df,col_names = set_columns(init_table)
+    init_df = init_df[init_df.Name.notnull()]
 
-    #rowcount = get_row_count(table)
-    im_orig_df = get_results(im_orig_df,table)
+    n=0
+    while n < len(url_list):
+        start_web_page = url_list[n].format(page_nr=1)
+        #set initial table to get columns
+        table = get_table(start_web_page)
+        #set initial columns names
+        im_orig_df,col_names = set_columns(table)
+
+        #rowcount = get_row_count(table)
+        im_orig_df = get_results(im_orig_df,table)
+
+        #print(im_orig_df)
+
+        for i in range(2,13):
+            page_nr = i
+            web_page = url_list[n].format(page_nr=page_nr)       #get the webpage url with page number
+            print("Processing {}".format(web_page))                                     #print page for debug
+            table = get_table(web_page)                         #get the first table on the webpage
+            rowcount = get_row_count(table)
+            #(re)initialize dataframe
+            im_results_df = pd.DataFrame(index= range(0,rowcount), columns=col_names)
+            im_results_df = get_results(im_results_df,table)
+
+            im_orig_df = merge_df(im_results_df,im_orig_df)
+        n += 1      #used to iterate through the list of webpages
+
+        init_df = merge_df(im_orig_df,init_df)
 
 
-    for i in range(2,13):
-        page_nr = i
-        web_page = ag3034_url.format(page_nr=page_nr)       #get the webpage url with page number
-        print(web_page)                                     #print page for debug
-        table = get_table(web_page)                         #get the first table on the webpage
-        rowcount = get_row_count(table)
-        #(re)initialize dataframe
-        im_results_df = pd.DataFrame(index= range(0,rowcount), columns=col_names)
-        im_results_df = get_results(im_results_df,table)
 
-        im_orig_df = merge_df(im_results_df,im_orig_df)
-
-    print(im_orig_df)
+    print(init_df)
