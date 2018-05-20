@@ -3,6 +3,13 @@ import urllib2
 from bs4 import BeautifulSoup
 import pandas as pd
 import sys
+import argparse
+
+#MANUALLY edit these variables before running
+url = "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20170910&agegroup=30-34&sex=M&y=2017&ps=20#axzz5G53hv48M"
+max_pg_nr = 14
+race_nm = "wisconsin"
+
 
 
 def get_table(url):
@@ -40,7 +47,7 @@ def set_columns(table):
     columns = column_names if len(column_names) > 0 else range(0,n_columns)
     df = pd.DataFrame(columns=columns, index= range(0,n_rows))
 
-    return df
+    return df,columns
 
 def get_row_count(table):
     n_rows=0
@@ -59,13 +66,10 @@ def get_results(df,table):
         column_marker = 0
         columns = row.find_all('td')
         for column in columns:
-            #print(column.get_text())
-            #print("ROW: {}   COL: {}".format(row_marker, column_marker))
             df.iat[row_marker,column_marker] = column.get_text()
             column_marker += 1
         if len(columns) > 0:
             row_marker += 1
-
     return df
 
 def merge_df(df1, df2):
@@ -75,23 +79,32 @@ def merge_df(df1, df2):
 
 
 if __name__ == '__main__':
-    im_start_page = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx"
-    url = "http://www.ironman.com/triathlon/events/americas/ironman/world-championship/results.aspx?p={page_nr}&ps=20#axzz5F4J2YBv1"
 
+
+    file_nm = "results/{}.csv".format(race_nm)
     #set initial table to get columns
-    table = get_table(im_start_page)
+    web_page = url.format(page_nr="1")
+    table = get_table(web_page)
     #set initial columns names
-    im_orig_df = set_columns(table)
+    im_orig_df,col_names = set_columns(table)
 
-    rowcount = get_row_count(table)
+    #rowcount = get_row_count(table)
+    im_orig_df = get_results(im_orig_df,table)
 
 
+    for i in range(2,max_pg_nr):
+        page_nr = i
+        web_page = url.format(page_nr=page_nr)       #get the webpage url with page number
+        print(web_page)                                     #print page for debug
+        table = get_table(web_page)                         #get the first table on the webpage
+        rowcount = get_row_count(table)
+        #(re)initialize dataframe
+        im_results_df = pd.DataFrame(index= range(0,rowcount), columns=col_names)
+        im_results_df = get_results(im_results_df,table)
 
-    for i in range(2):
-        page_nr = i + 1
-        web_page = url.format(page_nr=page_nr)
-        print(web_page)
-        table = get_table(web_page)
-        im_results_df = get_results(im_orig_df,table)
         im_orig_df = merge_df(im_results_df,im_orig_df)
+
     print(im_orig_df)
+    df = im_orig_df.sort_values("Div Rank")
+    df['Race Name'] = race_nm
+    df.to_csv(file_nm)
