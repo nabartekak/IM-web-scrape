@@ -6,7 +6,9 @@ import sys
 import argparse
 
 #MANUALLY edit these variables before running
+##url is the results page, limited by males, age 30-34, go to page 2 and then copy the link, and replace the p=2 with p={page_nr}
 url = "http://www.ironman.com/triathlon/events/americas/ironman/wisconsin/results.aspx?p={page_nr}&race=wisconsin&rd=20170910&agegroup=30-34&sex=M&y=2017&ps=20#axzz5G53hv48M"
+##max_pg_nr is the maximum number of pages in the results
 max_pg_nr = 14
 race_nm = "wisconsin"
 
